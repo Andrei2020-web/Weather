@@ -1,0 +1,41 @@
+{% extends 'weatherapp/base.html' %}
+
+{% block page_header %}<h1>Погода в вашем городе</h1>{% endblock %}
+
+{% block content%}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-5 offset-1">
+            <form action="" method="post">
+                {% csrf_token %}
+                <label for="new_city">Город</label>
+                <input class="form-control" id="id_new_city"
+                       name="new_city" type="text" placeholder="Введите город">
+                <input type="submit" name="send" value="Узнать" id="id_to_learn"
+                       class="mt-2 btn" style="background-color: #ff7f50;">
+            </form>
+        </div>
+
+        <div class="col-3 offset-1 class=mt-2 btn btn-info">
+            <h1>Информация</h1>
+
+            <div class="alert info">
+                {% if city %}
+                <table id="id_info_table">
+                    <tr><td>
+                    <b id="id_city_name">Город: {{ city }}</b><br>
+                    <b id="id_city_temp">Температура: {{ temp }}</b> <sup>o</sup><br>
+                    <b id="id_city_pressure">Атмосферное давление: {{ pressure }} мм рт.ст.</b><br>
+                    <b id="id_city_humidity">Влажность: {{ humidity }}</b><br>
+                    <b id="id_city_wind">Ветер: {{ wind }} м/с</b><br>
+                    <img id="id_city_pic" src="https://openweathermap.org/img/w/{{icon}}.png" alt="Фото погоды">
+                    </td></tr>
+                </table>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
