@@ -7,6 +7,7 @@ import time
 
 MAX_WAIT = 10
 
+
 def wait(fn):
     def modified_fn(*args, **kwargs):
         start_time = time.time()
@@ -94,3 +95,10 @@ class LoginTest(StaticLiveServerTestCase):
         self.browser.get(self.live_server_url)
         self.browser.find_element(by=By.LINK_TEXT,
                                   value='Войти').click()
+
+        # Страница перезагружается и перед пользователем представлена форма
+        # входа в которой он должен указать "логин\пароль"
+
+        # Пользователь указывает "логин\пароль" и нажимает кнопку "Войти"
+
+        # Теперь пользователь зарегистрирован в системе
