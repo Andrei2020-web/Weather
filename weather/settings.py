@@ -32,16 +32,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # добавлено приложение weatherapp
+    'weatherapp',
+    # добавлено приложение users
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # добавлено приложение weatherapp
-    'weatherapp',
-    # добавлено приложение users
-    'users',
 ]
 
 MIDDLEWARE = [

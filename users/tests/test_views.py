@@ -31,10 +31,30 @@ class RegistrationPageTest(TestCase):
     def test_post_request_can_register_a_new_user(self):
         '''post-запрос может зарегистрировать нового пользователя'''
 
-        response = self.client.post('/users/register/', data={'username': "WeatherUser1",
-                                                              'password1': "%%%%%%%%",
-                                                              'password2': "%%%%%%%%",
-                                                              })
+        response = self.client.post('/users/register/',
+                                    data={'username': "WeatherUser1",
+                                          'password1': "%%%%%%%%",
+                                          'password2': "%%%%%%%%",
+                                          })
         newUser = User.objects.get(username='WeatherUser1')
         self.assertEqual(newUser.username, 'WeatherUser1')
         self.assertRedirects(response, '/')
+
+
+class LoginPageTest(TestCase):
+    '''тест страницы входа в систему'''
+
+    def test_login_page_returns_correct_html(self):
+        '''тест: используется шаблон входа'''
+
+        response = self.client.get('/users/login/')
+        self.assertTemplateUsed(response, 'registration/login.html')
+
+class LogoutPageTest(TestCase):
+    '''тест страницы входа в систему'''
+
+    def test_logout_page_returns_correct_html(self):
+        '''тест: используется шаблон входа'''
+
+        response = self.client.get('/users/logout/')
+        self.assertTemplateUsed(response, 'registration/logged_out.html')
