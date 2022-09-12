@@ -1,51 +1,9 @@
-from selenium import webdriver
+from .base import FunctionalTest
 from selenium.webdriver.common.by import By
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.common.exceptions import WebDriverException
-import os
-import time
-
-MAX_WAIT = 10
 
 
-def wait(fn):
-    def modified_fn(*args, **kwargs):
-        start_time = time.time()
-        while True:
-            try:
-                return fn(*args, **kwargs)
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
-
-    return modified_fn
-
-
-class NewVisitorTest(StaticLiveServerTestCase):
+class NewVisitorTest(FunctionalTest):
     '''тест нового посетителя'''
-
-    def setUp(self):
-        '''установка'''
-        self.browser = webdriver.Firefox()
-        self.staging_server = os.environ.get('STAGING_SERVER')
-        if self.staging_server:
-            self.live_server_url = 'http://' + self.staging_server
-
-    def tearDown(self):
-        '''демонтаж'''
-        self.browser.quit()
-
-    def get_table_row(self):
-        '''получить строки таблицы'''
-        return self.browser.find_elements(by=By.CSS_SELECTOR,
-                                          value='#id_info_table')
-
-    @wait
-    def wait_for_row_in_list_table(self, item_text):
-        rows = self.get_table_row()
-        for row in rows:
-            self.assertIn(item_text, row.text)
 
     def test_can_get_weather_for_cities(self):
         '''тест: можно получить погоду в городах'''
@@ -81,7 +39,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.wait_for_row_in_list_table('Атмосферное давление')
         self.wait_for_row_in_list_table('Влажность')
         self.wait_for_row_in_list_table('Ветер')
-        #self.wait_for_row_in_list_table('https://openweathermap.org/img/')
+        # self.wait_for_row_in_list_table('https://openweathermap.org/img/')
 
         # Текстовое поле по-прежнему приглашает узнать погоду в городе.
         inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
