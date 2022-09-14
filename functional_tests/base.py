@@ -2,10 +2,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common.exceptions import WebDriverException
+from django.contrib.auth import BACKEND_SESSION_KEY, SESSION_KEY, \
+    HASH_SESSION_KEY, get_user_model
+from django.contrib.sessions.backends.db import SessionStore
+from django.conf import settings
 import os
 import time
 
 MAX_WAIT = 10
+User = get_user_model()
 
 
 def wait(fn):
@@ -65,3 +70,19 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.find_element(by=By.LINK_TEXT, value='Войти')
         navbar = self.browser.find_element(by=By.CSS_SELECTOR, value='.navbar')
         self.assertNotIn(username, navbar.text)
+
+    def create_pre_authenticated_sessions(self, username, password):
+        '''создать предварительно аутентифицированный сеанс'''
+        user = User.objects.create(username=username, password=password)
+        session = SessionStore()
+        session[SESSION_KEY] = user.pk
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
+        ## установить cookie, которые нужны для первого посещения домена.
+        ## страницы 404 загружаются быстрее всего!
+        self.browser.add_cookie(dict(
+            name=settings.SESSION_COOKIE_NAME,
+            value=session.session_key,
+            path='/'
+        ))
