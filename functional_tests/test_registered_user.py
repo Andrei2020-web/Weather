@@ -11,7 +11,7 @@ class RegisteredUserTest(FunctionalTest):
         self.wait_to_be_logged_out('WeatherUser1')
 
         # Пользователь является зарегистрированным пользователем
-        self.create_pre_authenticated_sessions('WeatherUser1', password='%%%%%%%%')
+        self.create_pre_authenticated_sessions('WeatherUser1', '%%%%%%%%')
         self.browser.refresh()
         # Пользователь впервые открывает домашнюю страницу как
         # зарегистрированный пользователь

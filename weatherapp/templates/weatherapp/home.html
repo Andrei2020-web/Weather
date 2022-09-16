@@ -9,8 +9,7 @@
             <form action="" method="post">
                 {% csrf_token %}
                 <label for="new_city">Город</label>
-                <input class="form-control" id="id_new_city"
-                       name="new_city" type="text" placeholder="Введите город">
+                {{ form.name }}
                 <input type="submit" name="send" value="Узнать" id="id_to_learn"
                        class="mt-2 btn" style="background-color: #ff7f50;">
             </form>
@@ -20,16 +19,18 @@
             <h1>Информация</h1>
 
             <div class="alert info">
-                {% if city %}
+                {% if total_cities > 0 %}
                 <table id="id_info_table">
+                    {% for info in all_info %}
                     <tr><td>
-                    <b id="id_city_name">Город: {{ city }}</b><br>
-                    <b id="id_city_temp">Температура: {{ temp }}</b> <sup>o</sup><br>
-                    <b id="id_city_pressure">Атмосферное давление: {{ pressure }} мм рт.ст.</b><br>
-                    <b id="id_city_humidity">Влажность: {{ humidity }}</b><br>
-                    <b id="id_city_wind">Ветер: {{ wind }} м/с</b><br>
-                    <img id="id_city_pic" src="https://openweathermap.org/img/w/{{icon}}.png" alt="Фото погоды">
+                    <b id="id_city_name">Город: {{ info.name }}</b><br>
+                    <b id="id_city_temp">Температура: {{ info.temp }}</b> <sup>o</sup><br>
+                    <b id="id_city_pressure">Атмосферное давление: {{ info.pressure }} мм рт.ст.</b><br>
+                    <b id="id_city_humidity">Влажность: {{ info.humidity }}</b><br>
+                    <b id="id_city_wind">Ветер: {{ info.wind }} м/с</b><br>
+                    <img id="id_city_pic" src="https://openweathermap.org/img/w/{{info.icon}}.png" alt="Фото погоды">
                     </td></tr>
+                    {% endfor %}
                 </table>
                 {% endif %}
             </div>
