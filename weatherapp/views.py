@@ -19,26 +19,29 @@ def home_page(request):
                 new_city = form.save(commit=False)
                 new_city.owner = request.user
                 new_city.save()
-            cities = City.objects.filter(owner=request.user).order_by('-id')
-            for name in cities:
-                citiesNames.append(name)
         else:
             citiesNames.append(request.POST.get('name', ''))
 
-        for cityName in citiesNames:
-            url = f'https://api.openweathermap.org/data/2.5/weather?q={cityName}&appid={api_key}&units=metric'
-            res = requests.get(url).json()
-            pressure_mm_rts = round(
-                res["main"]["pressure"] * 0.750063755419211)
-            city_info = {
-                'name': cityName,
-                'temp': res["main"]["temp"],
-                'pressure': pressure_mm_rts,
-                'humidity': res["main"]["humidity"],
-                'wind': res["wind"]["speed"],
-                'icon': res["weather"][0]["icon"],
-            }
-            all_cities.append(city_info)
+    if request.user.is_authenticated:
+        cities = City.objects.filter(owner=request.user).order_by('-id')
+        for name in cities:
+            citiesNames.append(name)
+
+    for cityName in citiesNames:
+        url = f'https://api.openweathermap.org/data/2.5/weather?q={cityName}&appid={api_key}&units=metric'
+        res = requests.get(url).json()
+        pressure_mm_rts = round(
+            res["main"]["pressure"] * 0.750063755419211)
+        city_info = {
+            'name': cityName,
+            'temp': res["main"]["temp"],
+            'pressure': pressure_mm_rts,
+            'humidity': res["main"]["humidity"],
+            'wind': res["wind"]["speed"],
+            'icon': res["weather"][0]["icon"],
+        }
+        all_cities.append(city_info)
+
     form = CityForm()
     context = {'all_info': all_cities, 'form': form,
                'total_cities': len(all_cities)}

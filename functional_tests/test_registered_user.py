@@ -54,8 +54,23 @@ class RegisteredUserTest(FunctionalTest):
         self.wait_for_row_in_list_table('Сочи')
         self.wait_for_row_in_list_table('Москва')
 
-        # Пользователь выходит из системы, нажимает на раздел "Главная".
-        # Данные о погоде пропадают.
+        # Пользователь нажимает на раздел "Главная",
+        # обновлённые данные о погоде в городе
+        # "Москва" и "Сочи" опять показаны пользователю
+        self.browser.find_element(by=By.LINK_TEXT,
+                                  value='Главная').click()
+        self.wait_for_row_in_list_table('Сочи')
+        self.wait_for_row_in_list_table('Москва')
 
-        # Пользователь входит в систему, данные о погоде
-        # в "Москва" и "Сочи" опять показаны пользователю.
+        # Пользователь выходит из системы, нажимает на раздел "Главная".
+        # данные о погоде пропадают.
+        self.browser.find_element(by=By.LINK_TEXT,
+                                  value='Выйти').click()
+        self.wait_to_be_logged_out('WeatherUser1')
+        self.browser.find_element(by=By.LINK_TEXT,
+                                  value='Главная').click()
+        page_text = self.wait_for(
+            lambda: self.browser.find_element(by=By.TAG_NAME,
+                                              value='body').text)
+        self.assertNotIn('Москва', page_text)
+        self.assertNotIn('Сочи', page_text)
