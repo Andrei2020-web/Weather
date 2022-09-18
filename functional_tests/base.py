@@ -86,3 +86,11 @@ class FunctionalTest(StaticLiveServerTestCase):
             value=session.session_key,
             path='/'
         ))
+
+    def get_item_input_box(self):
+        '''получить поле ввода для элемента'''
+        return self.browser.find_element(by=By.ID, value='id_new_city')
+
+    def get_item_button(self):
+        '''получить кнопку'''
+        return self.browser.find_element(by=By.ID, value="id_to_learn")
