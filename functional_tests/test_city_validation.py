@@ -6,6 +6,10 @@ from .base import FunctionalTest
 class CityValidation(FunctionalTest):
     '''тест валидации города'''
 
+    def get_error_element(self):
+        '''получить элемент с ошибкой'''
+        return self.browser.find_element(by=By.CSS_SELECTOR, value='.has-error')
+
     def test_cannot_find_out_weather_without_city_name(self):
         '''тест: нельзя узнать погоду не указав название города'''
         # Пользователь открывает домашнюю страницу и случайно пытается узнать
@@ -47,11 +51,24 @@ class CityValidation(FunctionalTest):
          информацию на страницу'''
         # Зарегистрированный пользователь открывает домашнюю страницу
         # и вводит в текстовом поле "Москва"
+        self.browser.get(self.live_server_url)
+        self.wait_to_be_logged_out('WeatherUser1')
+        self.create_pre_authenticated_sessions('WeatherUser1', '%%%%%%%%')
+        self.browser.refresh()
+        self.get_item_input_box().send_keys('Москва')
 
         # Когда он нажимает кнопку "Узнать", страница обновляется,
         # и теперь страница содержит данные о погоде в Москве.
+        self.get_item_button().click()
+        self.wait_for_row_in_list_table('Москва')
 
         # Пользователь случайно ещё раз вводит город "Москва"
+        self.get_item_input_box().send_keys('Москва')
+        self.get_item_button().click()
 
         # Он видит полезное сообщение об ошибке
+        self.wait_for(lambda: self.assertEqual(
+            self.get_error_element().text.replace('* ', ''),
+            "You've already got this in your list"
+        ))
 

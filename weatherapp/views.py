@@ -20,7 +20,8 @@ def home_page(request):
                 new_city.owner = request.user
                 new_city.save()
         else:
-            citiesNames.append(request.POST.get('name', ''))
+            if request.POST.get('name', ''):
+                citiesNames.append(request.POST.get('name', ''))
 
     if request.user.is_authenticated:
         cities = City.objects.filter(owner=request.user).order_by('-id')
