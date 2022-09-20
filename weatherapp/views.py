@@ -12,6 +12,7 @@ def home_page(request):
     api_key = os.environ.get('api_key_weather')
     all_cities = []
     citiesNames = []
+    form = CityForm()
     if request.method == 'POST':
         if request.user.is_authenticated:
             form = CityForm(request.POST)
@@ -43,7 +44,6 @@ def home_page(request):
         }
         all_cities.append(city_info)
 
-    form = CityForm()
     context = {'all_info': all_cities, 'form': form,
                'total_cities': len(all_cities)}
     return render(request, 'weatherapp/home.html',

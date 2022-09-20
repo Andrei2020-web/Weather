@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-
 from .base import FunctionalTest
 
 
@@ -63,12 +62,12 @@ class CityValidation(FunctionalTest):
         self.wait_for_row_in_list_table('Москва')
 
         # Пользователь случайно ещё раз вводит город "Москва"
+        self.get_item_input_box().clear()
         self.get_item_input_box().send_keys('Москва')
         self.get_item_button().click()
 
         # Он видит полезное сообщение об ошибке
         self.wait_for(lambda: self.assertEqual(
             self.get_error_element().text.replace('* ', ''),
-            "You've already got this in your list"
+            "Вы уже получили информацию по данному городу."
         ))
-

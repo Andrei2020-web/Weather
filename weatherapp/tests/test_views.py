@@ -3,7 +3,8 @@ from django.urls import resolve
 from weatherapp.views import home_page
 from django.contrib.auth import get_user_model
 from weatherapp.models import City
-from weatherapp.forms import CityForm
+from weatherapp.forms import CityForm, DUPLICATE_CITY_ERROR
+from django.utils.html import escape
 
 User = get_user_model()
 
@@ -91,3 +92,17 @@ class HomePageTest(TestCase):
         '''тест на недопустимый ввод: форма передаётся в шаблон'''
         response = self.client.post('/', data={'name': ""})
         self.assertIsInstance(response.context['form'], CityForm)
+
+    def test_duplicate_city_validation_errors_end_up_on_home_page_(self):
+        '''тест: ошибки валидации повторяющегося города
+            оканчиваются на домашней странице'''
+        user1 = User.objects.create(username='WeatherUser1',
+                                    password='%%%%%%%%')
+        self.client.force_login(user1)
+        city1 = City.objects.create(name='Москва', owner=user1)
+        response = self.client.post('/', data={'name': 'Москва'})
+
+        expected_error = escape(DUPLICATE_CITY_ERROR)
+        self.assertContains(response, expected_error)
+        self.assertTemplateUsed(response, 'weatherapp/home.html')
+        self.assertEqual(City.objects.all().count(), 1)

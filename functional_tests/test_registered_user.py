@@ -40,6 +40,7 @@ class RegisteredUserTest(FunctionalTest):
 
         # Текстовое поле по-прежнему приглашает узнать погоду в городе.
         inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
+        inputbox.clear()
         self.assertEqual(inputbox.get_attribute('placeholder'), "Введите город")
 
         # Пользователь набирает в текстовом поле "Сочи" (видимо пользователь

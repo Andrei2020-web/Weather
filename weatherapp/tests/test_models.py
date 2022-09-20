@@ -42,3 +42,13 @@ class CityModelTest(TestCase):
         with self.assertRaises(IntegrityError):
             city.save()
             city.full_clean()
+
+    def test_duplicate_cities_names_are_invalid(self):
+        '''тесты: повторы названий городов не допустимы'''
+        user1 = User.objects.create(username='WeatherUser1',
+                                    password='%%%%%%%%')
+        self.client.force_login(user1)
+        city1 = City.objects.create(name='Москва', owner=user1)
+        with self.assertRaises(ValidationError):
+            city2 = City(name='Москва', owner=user1)
+            city2.full_clean()

@@ -10,6 +10,11 @@
                 {% csrf_token %}
                 <label for="new_city">Город</label>
                 {{ form.name }}
+                {% if form.errors %}
+                    <div class="form-group has-error">
+                        <div class="help-block">{{ form.name.errors.as_text }}</div>
+                    </div>
+                {% endif %}
                 <input type="submit" name="send" value="Узнать" id="id_to_learn"
                        class="mt-2 btn" style="background-color: #ff7f50;">
             </form>
