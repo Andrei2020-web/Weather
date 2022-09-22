@@ -76,6 +76,13 @@ class CityValidation(FunctionalTest):
         '''тест: нельзя узнать погоду в несуществующем городе'''
         # Пользователь открывает домашнюю страницу и вводит
         # в текстовом поле "Которого нет"
+        self.browser.get(self.live_server_url)
+        self.get_item_input_box().send_keys('Которого нет')
 
         # Когда он нажимает кнопку "Узнать", страница обновляется,
         # и теперь он видит полезное сообщение об ошибке
+        self.get_item_button().click()
+        self.wait_for(lambda: self.assertEqual(
+            self.get_error_element().text.replace('* ', ''),
+            "Информация по городу не найдена."
+        ))
