@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from .models import City
-from .forms import CityForm
+from .forms import CityForm, NON_EXISTENT_CITY_ERROR
 import requests
 import os
+from django.forms.utils import ErrorList
 
 
 def home_page(request):
@@ -32,6 +33,11 @@ def home_page(request):
     for cityName in citiesNames:
         url = f'https://api.openweathermap.org/data/2.5/weather?q={cityName}&appid={api_key}&units=metric'
         res = requests.get(url).json()
+        if res.get('cod', '') == '404' or not res.get('cod', ''):
+            form.errors["name"] = ErrorList([NON_EXISTENT_CITY_ERROR])
+            if request.method == 'POST' and request.user.is_authenticated:
+                new_city.delete()
+            continue
         pressure_mm_rts = round(
             res["main"]["pressure"] * 0.750063755419211)
         city_info = {

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import resolve
-from weatherapp.views import home_page
+from weatherapp.views import home_page, NON_EXISTENT_CITY_ERROR
 from django.contrib.auth import get_user_model
 from weatherapp.models import City
 from weatherapp.forms import CityForm, DUPLICATE_CITY_ERROR
@@ -106,3 +106,15 @@ class HomePageTest(TestCase):
         self.assertContains(response, expected_error)
         self.assertTemplateUsed(response, 'weatherapp/home.html')
         self.assertEqual(City.objects.all().count(), 1)
+
+    def test_non_existent_city_validation_errors_end_up_on_home_page(self):
+        '''тест: ошибки валидации несуществующего города
+         оканчиваются на домашней странице'''
+        user1 = User.objects.create(username='WeatherUser1',
+                                    password='%%%%%%%%')
+        self.client.force_login(user1)
+        response = self.client.post('/', data={'name': 'Которого нет'})
+        expected_error = escape(NON_EXISTENT_CITY_ERROR)
+        self.assertContains(response, expected_error)
+        self.assertTemplateUsed(response, 'weatherapp/home.html')
+        self.assertEqual(City.objects.all().count(), 0)

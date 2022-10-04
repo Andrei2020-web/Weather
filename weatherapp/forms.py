@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 
 EMPTY_CITY_ERROR = "Пожалуйста, укажите название города."
 DUPLICATE_CITY_ERROR = "Вы уже получили информацию по данному городу."
+NON_EXISTENT_CITY_ERROR = "Информация по городу не найдена."
 
 
 class CityForm(ModelForm):
