@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import City
 from .forms import CityForm, NON_EXISTENT_CITY_ERROR
 import requests
@@ -54,3 +54,8 @@ def home_page(request):
                'total_cities': len(all_cities)}
     return render(request, 'weatherapp/home.html',
                   context)
+
+
+def delete_city(request, city_name):
+    '''удаляет город из бд для пользователя'''
+    pass

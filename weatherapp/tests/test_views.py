@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import resolve
-from weatherapp.views import home_page, NON_EXISTENT_CITY_ERROR
+from weatherapp.views import home_page, NON_EXISTENT_CITY_ERROR, delete_city
 from django.contrib.auth import get_user_model
 from weatherapp.models import City
 from weatherapp.forms import CityForm, DUPLICATE_CITY_ERROR
@@ -118,3 +118,44 @@ class HomePageTest(TestCase):
         self.assertContains(response, expected_error)
         self.assertTemplateUsed(response, 'weatherapp/home.html')
         self.assertEqual(City.objects.all().count(), 0)
+
+
+class DeleteCityTest(TestCase):
+    '''тест удаления города'''
+
+    def test_delete_url_resolves_to_delete_view(self):
+        '''тест: delete url преобразуется в представление
+            delete'''
+        found = resolve('/delete_city/Москва')
+        self.assertEqual(found.func, delete_city)
+
+    def test_authorized_user_can_delete_city_of_which_he_is_the_owner(self):
+        '''Aвторизованный пользователь может удалить город
+         владельцем которого он является'''
+        user1 = User.objects.create(username='WeatherUser1',
+                                    password='%%%%%%%%')
+        self.client.force_login(user1)
+        City1 = City.objects.create(name='Самара', owner=user1)
+        City2 = City.objects.create(name='Адлер', owner=user1)
+        response = self.client.get('/delete_city/Самара')
+
+        self.assertNotIn('Самара', response.content.decode())
+        self.assertEqual(City.objects.all().count(), 1)
+
+    def test_authorized_user_cannot_delete_city_that_he_is_not_the_owner(self):
+        '''Aвторизованный пользователь не может удалить город
+         владельцем которого он не является'''
+        user1 = User.objects.create(username='WeatherUser1',
+                                    password='%%%%%%%%')
+        user2 = User.objects.create(username='WeatherUser2',
+                                    password='%%%%%%%%')
+        self.client.force_login(user1)
+        City1 = City.objects.create(name='Самара', owner=user1)
+        City2 = City.objects.create(name='Адлер', owner=user1)
+        City3 = City.objects.create(name='Самара', owner=user2)
+        City4 = City.objects.create(name='Адлер', owner=user2)
+        response = self.client.get('/delete_city/Самара')
+
+        self.assertEqual(City.objects.filter(name='Самара',
+                                             owner=user1).count(), 1)
+        self.assertEqual(City.objects.filter(owner=user2).count(), 2)

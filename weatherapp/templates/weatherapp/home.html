@@ -28,6 +28,9 @@
                 <table id="id_info_table">
                     {% for info in all_info %}
                     <tr><td>
+                    {% if user.is_authenticated %}
+                        <p align="right"><a href="{% url 'delete_city' info.name %}" id="id_delete_{{info.name}}">Удалить</a></p>
+                    {% endif %}
                     <b id="id_city_name">Город: {{ info.name }}</b><br>
                     <b id="id_city_temp">Температура: {{ info.temp }}</b> <sup>o</sup><br>
                     <b id="id_city_pressure">Атмосферное давление: {{ info.pressure }} мм рт.ст.</b><br>

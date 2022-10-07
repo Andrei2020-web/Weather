@@ -20,6 +20,7 @@ from weatherapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home_page, name='home'),
+    path('delete_city/<str:city_name>', views.delete_city, name='delete_city'),
     # Добавлен модуль users.urls
     path('users/', include('users.urls')),
 ]
