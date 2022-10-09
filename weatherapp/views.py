@@ -4,6 +4,7 @@ from .forms import CityForm, NON_EXISTENT_CITY_ERROR
 import requests
 import os
 from django.forms.utils import ErrorList
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def home_page(request):
@@ -17,10 +18,9 @@ def home_page(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
             form = CityForm(request.POST)
+            form.instance.owner = request.user
             if form.is_valid():
-                new_city = form.save(commit=False)
-                new_city.owner = request.user
-                new_city.save()
+                new_city = form.save()
         else:
             if request.POST.get('name', ''):
                 citiesNames.append(request.POST.get('name', ''))
@@ -58,4 +58,10 @@ def home_page(request):
 
 def delete_city(request, city_name):
     '''удаляет город из бд для пользователя'''
-    pass
+    if request.user.is_authenticated and city_name:
+        try:
+            city = City.objects.get(name=city_name, owner=request.user)
+            city.delete()
+        except ObjectDoesNotExist as e:
+            pass
+    return redirect('home')

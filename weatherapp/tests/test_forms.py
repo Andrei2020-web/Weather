@@ -26,5 +26,6 @@ class CityFormTest(TestCase):
         self.client.force_login(user1)
         city = City.objects.create(name='Москва', owner=user1)
         form = CityForm(data={'name': 'Москва'})
+        form.instance.owner = user1
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['name'], [DUPLICATE_CITY_ERROR])

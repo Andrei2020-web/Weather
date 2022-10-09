@@ -129,6 +129,16 @@ class DeleteCityTest(TestCase):
         found = resolve('/delete_city/Москва')
         self.assertEqual(found.func, delete_city)
 
+    def test_redirects_after_delete_city(self):
+        '''тест: переадресует после удаления города'''
+        user1 = User.objects.create(username='WeatherUser1',
+                                    password='%%%%%%%%')
+        self.client.force_login(user1)
+        City1 = City.objects.create(name='Самара', owner=user1)
+        City2 = City.objects.create(name='Адлер', owner=user1)
+        response = self.client.get('/delete_city/Самара')
+        self.assertRedirects(response, '/')
+
     def test_authorized_user_can_delete_city_of_which_he_is_the_owner(self):
         '''Aвторизованный пользователь может удалить город
          владельцем которого он является'''
@@ -140,7 +150,9 @@ class DeleteCityTest(TestCase):
         response = self.client.get('/delete_city/Самара')
 
         self.assertNotIn('Самара', response.content.decode())
-        self.assertEqual(City.objects.all().count(), 1)
+        self.assertEqual(City.objects.filter(name='Самара',
+                                             owner=user1).count(), 0)
+        self.assertEqual(City.objects.filter(owner=user1).count(), 1)
 
     def test_authorized_user_cannot_delete_city_that_he_is_not_the_owner(self):
         '''Aвторизованный пользователь не может удалить город
@@ -155,7 +167,6 @@ class DeleteCityTest(TestCase):
         City3 = City.objects.create(name='Самара', owner=user2)
         City4 = City.objects.create(name='Адлер', owner=user2)
         response = self.client.get('/delete_city/Самара')
-
         self.assertEqual(City.objects.filter(name='Самара',
-                                             owner=user1).count(), 1)
+                                             owner=user2).count(), 1)
         self.assertEqual(City.objects.filter(owner=user2).count(), 2)

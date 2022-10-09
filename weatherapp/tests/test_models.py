@@ -44,7 +44,7 @@ class CityModelTest(TestCase):
             city.full_clean()
 
     def test_duplicate_cities_names_are_invalid(self):
-        '''тесты: повторы названий городов не допустимы'''
+        '''тест: повторы названий городов не допустимы'''
         user1 = User.objects.create(username='WeatherUser1',
                                     password='%%%%%%%%')
         self.client.force_login(user1)
@@ -52,3 +52,16 @@ class CityModelTest(TestCase):
         with self.assertRaises(ValidationError):
             city2 = City(name='Москва', owner=user1)
             city2.full_clean()
+
+    def test_duplicate_cities_names_for_different_users_are_valid(self):
+        '''тест: допустимы повторяющиеся названия городов
+         для разных пользователей'''
+        user1 = User.objects.create(username='WeatherUser1',
+                                    password='%%%%%%%%')
+        user2 = User.objects.create(username='WeatherUser2',
+                                    password='%%%%%%%%')
+        self.client.force_login(user1)
+        city1 = City.objects.create(name='Москва', owner=user1)
+        self.client.force_login(user2)
+        city2 = City.objects.create(name='Москва', owner=user2)
+        city2.full_clean()  # не должно поднять исключение
