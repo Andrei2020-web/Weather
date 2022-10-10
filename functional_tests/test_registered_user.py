@@ -20,7 +20,7 @@ class RegisteredUserTest(FunctionalTest):
 
         # Пользователю предлагается узнать погоду в
         # конкретном городе
-        inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute('placeholder'), "Введите город")
 
         # Пользователь набирает в текстовом поле "Москва" (в этом городе
@@ -29,8 +29,7 @@ class RegisteredUserTest(FunctionalTest):
 
         # Когда он нажимает кнопку "Узнать", страница обновляется,
         # и теперь страница содержит данные о погоде в Москве.
-        button_to_learn = self.browser.find_element(by=By.ID,
-                                                    value='id_to_learn').click()
+        self.get_item_button().click()
 
         self.wait_for_row_in_list_table('Москва')
         self.wait_for_row_in_list_table('Температура')
@@ -39,7 +38,7 @@ class RegisteredUserTest(FunctionalTest):
         self.wait_for_row_in_list_table('Ветер')
 
         # Текстовое поле по-прежнему приглашает узнать погоду в городе.
-        inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
+        inputbox = self.get_item_input_box()
         inputbox.clear()
         self.assertEqual(inputbox.get_attribute('placeholder'), "Введите город")
 
@@ -50,8 +49,7 @@ class RegisteredUserTest(FunctionalTest):
         # Когда он нажимает "Узнать", страница снова обновляется, и теперь
         # показывает данные о погоде в "Сочи" и в "Москва"
         # Данные о погоде в "Москва" не пропадают.
-        button_to_learn = self.browser.find_element(by=By.ID,
-                                                    value='id_to_learn').click()
+        self.get_item_button().click()
         self.wait_for_row_in_list_table('Сочи')
         self.wait_for_row_in_list_table('Москва')
 
@@ -70,9 +68,7 @@ class RegisteredUserTest(FunctionalTest):
         self.wait_to_be_logged_out('WeatherUser1')
         self.browser.find_element(by=By.LINK_TEXT,
                                   value='Главная').click()
-        page_text = self.wait_for(
-            lambda: self.browser.find_element(by=By.TAG_NAME,
-                                              value='body').text)
+        page_text = self.wait_for(lambda: self.get_item_body().text)
         self.assertNotIn('Москва', page_text)
         self.assertNotIn('Сочи', page_text)
 
@@ -92,7 +88,7 @@ class RegisteredUserTest(FunctionalTest):
 
         # Пользователю предлагается узнать погоду в
         # конкретном городе
-        inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute('placeholder'), "Введите город")
 
         # Пользователь набирает в текстовом поле "Москва"
@@ -100,7 +96,7 @@ class RegisteredUserTest(FunctionalTest):
 
         # Когда он нажимает кнопку "Узнать", страница обновляется,
         # и теперь страница содержит данные о погоде в Москве.
-        self.browser.find_element(by=By.ID, value='id_to_learn').click()
+        self.get_item_button().click()
 
         self.wait_for_row_in_list_table('Москва')
         self.wait_for_row_in_list_table('Температура')
@@ -109,7 +105,7 @@ class RegisteredUserTest(FunctionalTest):
         self.wait_for_row_in_list_table('Ветер')
 
         # Текстовое поле по-прежнему приглашает узнать погоду в городе.
-        inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
+        inputbox = self.get_item_input_box()
         inputbox.clear()
         self.assertEqual(inputbox.get_attribute('placeholder'), "Введите город")
 
@@ -118,7 +114,7 @@ class RegisteredUserTest(FunctionalTest):
 
         # Когда он нажимает "Узнать", страница снова обновляется, и теперь
         # показывает данные о погоде в "Сочи" и в "Москва"
-        self.browser.find_element(by=By.ID, value='id_to_learn').click()
+        self.get_item_button().click()
         self.wait_for_row_in_list_table('Сочи')
         self.wait_for_row_in_list_table('Москва')
 
@@ -140,9 +136,7 @@ class RegisteredUserTest(FunctionalTest):
         self.wait_for_row_in_list_table('Влажность')
         self.wait_for_row_in_list_table('Ветер')
 
-        page_text = self.wait_for(
-            lambda: self.browser.find_element(by=By.TAG_NAME,
-                                              value='body').text)
+        page_text = self.wait_for(lambda: self.get_item_body().text)
         self.assertNotIn('Москва', page_text)
 
         # Пользователь ещё раз нажимает на ссылку "Удалить",
@@ -150,8 +144,6 @@ class RegisteredUserTest(FunctionalTest):
         self.browser.find_element(by=By.ID, value='id_delete_Сочи').click()
 
         # Страница обновляется, данные о погоде в "Сочи" пропадают
-        page_text = self.wait_for(
-            lambda: self.browser.find_element(by=By.TAG_NAME,
-                                              value='body').text)
+        page_text = self.wait_for(lambda: self.get_item_body().text)
         self.assertNotIn('Москва', page_text)
         self.assertNotIn('Сочи', page_text)

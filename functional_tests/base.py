@@ -94,3 +94,11 @@ class FunctionalTest(StaticLiveServerTestCase):
     def get_item_button(self):
         '''получить кнопку'''
         return self.browser.find_element(by=By.ID, value="id_to_learn")
+
+    def get_item_body(self):
+        '''получить элемент тела'''
+        return self.browser.find_element(by=By.TAG_NAME, value='body')
+
+    def get_item_header(self):
+        '''получить элемент заголовка'''
+        return self.browser.find_element(by=By.TAG_NAME, value='h1')

@@ -1,5 +1,4 @@
 from .base import FunctionalTest
-from selenium.webdriver.common.by import By
 
 
 class NewVisitorTest(FunctionalTest):
@@ -15,12 +14,12 @@ class NewVisitorTest(FunctionalTest):
         # Он видит, что заголовок и шапка страницы говорит о том,
         # что это погодное приложение
         self.assertIn('Погодное приложение', self.browser.title)
-        header_text = self.browser.find_element(by=By.TAG_NAME, value='h1').text
+        header_text = self.get_item_header().text
         self.assertEqual('Погода в вашем городе', header_text)
 
         # Пользователю сразу же предлагается узнать погоду в
         # конкретном городе
-        inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute('placeholder'), "Введите город")
 
         # Пользователь набирает в текстовом поле "Москва" (в этом городе
@@ -31,8 +30,7 @@ class NewVisitorTest(FunctionalTest):
         # и теперь страница содержит данные о погоде в Москве.
         # Есть данные о температуре, атмосферном давлении, влажности, ветре,
         # а также есть информативная картинка
-        button_to_learn = self.browser.find_element(by=By.ID,
-                                                    value='id_to_learn').click()
+        self.get_item_button().click()
 
         self.wait_for_row_in_list_table('Москва')
         self.wait_for_row_in_list_table('Температура')
@@ -42,7 +40,7 @@ class NewVisitorTest(FunctionalTest):
         # self.wait_for_row_in_list_table('https://openweathermap.org/img/')
 
         # Текстовое поле по-прежнему приглашает узнать погоду в городе.
-        inputbox = self.browser.find_element(by=By.ID, value='id_new_city')
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute('placeholder'), "Введите город")
 
         # Пользователь набирает в текстовом поле "Сочи" (видимо пользователь
@@ -52,8 +50,7 @@ class NewVisitorTest(FunctionalTest):
         # Когда он нажимает "Узнать", страница снова обновляется, и теперь
         # показывает данные о погоде в "Сочи",
         # а данные о погоде в "Москва" пропадают.
-        button_to_learn = self.browser.find_element(by=By.ID,
-                                                    value='id_to_learn').click()
+        self.get_item_button().click()
         self.wait_for_row_in_list_table('Сочи')
         self.wait_for_row_in_list_table('Температура')
         self.wait_for_row_in_list_table('Атмосферное давление')
@@ -61,7 +58,7 @@ class NewVisitorTest(FunctionalTest):
         self.wait_for_row_in_list_table('Ветер')
         # self.wait_for_row_in_list_table('https://openweathermap.org/img/')
 
-        page_text = self.browser.find_element(by=By.TAG_NAME, value='body').text
+        page_text = self.get_item_body().text
         self.assertNotIn('Москва', page_text)
 
         # Удовлетворённый пользователь ложится спать.

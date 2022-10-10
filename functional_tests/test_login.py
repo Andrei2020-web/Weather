@@ -17,9 +17,7 @@ class LoginTest(FunctionalTest):
         # Страница перезагружается и перед пользователем представлена форма регистрации
         # нового пользователя в которой он должен указать "логин\пароль"
 
-        header_text = self.wait_for(
-            lambda: self.browser.find_element(by=By.TAG_NAME, value='h1').text
-        )
+        header_text = self.wait_for(lambda: self.get_item_header().text)
         self.assertEqual('Зарегистрируйте свой аккаунт', header_text)
 
         # Пользователь указывает "логин\пароль" и нажимает кнопку регистрации
@@ -53,9 +51,7 @@ class LoginTest(FunctionalTest):
 
         # Страница перезагружается и перед пользователем представлена форма
         # входа в которой он должен указать "логин\пароль"
-        header_text = self.wait_for(
-            lambda: self.browser.find_element(by=By.TAG_NAME, value='h1').text
-        )
+        header_text = self.wait_for(lambda: self.get_item_header().text)
         self.assertEqual('Войдите в свой аккаунт', header_text)
 
         # Пользователь указывает "логин\пароль" и нажимает кнопку "Войти"
